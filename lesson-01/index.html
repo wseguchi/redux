@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+  <title>Redux - Lesson 1</title>
+</head>
+
+<body>
+  <h1 id="title">Hello World!</h1>
+  <script>
+    const initialState = {
+      name: "Wildson",
+      id: 1984
+    }
+
+    function reducer(state = initialState, action) {
+      return state
+    }
+
+    const store = Redux.createStore(reducer);
+    console.log(store)
+    const state = store.getState();
+    const title = (`${state.name} was born in ${state.id}.`)
+
+    document.querySelector("#title").innerText = title;
+  </script>
+</body>
+
+</html>
