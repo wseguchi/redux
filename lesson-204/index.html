@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+  <title>Redux Lessons</title>
+</head>
+
+<body>
+
+  <h1 id="title">Hello World!</h1>
+
+  <button id="button">Double State</button>
+
+  <h1> Total = <span id="total"></span></h1>
+
+  <button id="btnShow">Show</button>
+  <button id="btnHide">Hide</button>
+  <script>
+    // Constants
+    const SUM = 'SUM';
+    const DOUBLE = 'DOUBLE';
+    const SHOW = 'SHOW';
+    const HIDE = 'HIDE';
+
+    // Action Creator
+    function double() {
+      return { type: DOUBLE }
+    }
+    function sum(payload) {
+      return { type: SUM, payload }
+    }
+    function show() {
+      return { type: SHOW }
+    }
+    function hide() {
+      return { type: HIDE }
+    }
+
+    // Set intial state for Reducer function
+    // const initialState = 0
+
+    // More then one fuction to go inside Reducer
+    function number(state = 0, action) {
+      // console.log(state);
+      // console.log(action);
+      switch (action.type) {
+        case 'SUM':
+          return state + action.payload;
+        case 'DOUBLE':
+          return state * 2
+        default:
+          return state
+      }
+    }
+    function toggleResult(state = true, action) {
+      switch (action.type) {
+        case 'SHOW':
+          return true;
+        case 'HIDE':
+          return false;
+        default:
+          return state
+      }
+    }
+    const reducer = Redux.combineReducers({ number, toggleResult })
+    const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),);
+
+    // Render: everything that needs to be re-rendered when the state changes - passed to store.subscribe method
+    function render() {
+      state = store.getState()
+      total.innerText = state.number
+      console.log(state)
+      if (state.toggleResult) {
+        total.style.display = 'inline-block'
+      } else {
+        total.style.display = 'none'
+      }
+    }
+
+    // Passing both variaibles
+    store.dispatch(sum(10))
+    // Not passing a payload, just the type
+    store.dispatch(double())
+
+    // Shows initial state on <h1>
+    let state = store.getState();
+    document.querySelector("#title").innerText = `State = ${state.number}`;
+
+    // Button
+    const button = document.querySelector('#button');
+    button.addEventListener('click', () => store.dispatch(sum(1000)))
+
+    // Total <h1>
+    const total = document.querySelector('#total');
+    total.innerText = state.number
+
+    const btnShow = document.querySelector('#btnShow');
+    btnShow.addEventListener('click', () => store.dispatch(show()))
+
+    const btnHide = document.querySelector('#btnHide');
+    btnHide.addEventListener('click', () => store.dispatch(hide()))
+
+
+    // Redux: store subscribe method
+    const unsubscribe = store.subscribe(render)
+    // To stop subscribe, return the subscribe itself
+    // unsubscribe();
+
+
+  </script>
+</body>
+
+</html>
