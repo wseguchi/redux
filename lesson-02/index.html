@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+  <title>Redux - Lesson 1</title>
+</head>
+
+<body>
+  <h1 id="title">Hello World!</h1>
+  <script>
+    const initialState = 10
+
+    function reducer(state = initialState, action) {
+      console.log(state);
+      console.log(action);
+
+      if (action.type === "sum") {
+        return state + action.payload
+      } else {
+        return state
+      }
+
+
+    }
+
+    const store = Redux.createStore(reducer);
+
+    store.dispatch({ type: "sum", payload: 10 })
+    store.dispatch({ type: "sum", payload: 10 })
+    store.dispatch({ type: "sum", payload: 10 })
+    store.dispatch({ type: "sum", payload: 10 })
+    store.dispatch({ type: "sum", payload: 10 })
+
+
+    let state = store.getState();
+
+    console.log(`Final state: ${state}`);
+
+
+
+    document.querySelector("#title").innerText = state;
+  </script>
+</body>
+
+</html>
