@@ -14,6 +14,8 @@
 
   <button id="button">Double State</button>
 
+  <h1> Total = <span id="total"></span></h1>
+
   <script>
     // Constants
     const SUM = 'SUM';
@@ -23,13 +25,14 @@
     function double() {
       return { type: DOUBLE }
     }
-
     function sum(payload) {
       return { type: SUM, payload }
     }
 
+    // Set intial state for Reducer function
     const initialState = 10
 
+    // Reducer function
     function reducer(state = initialState, action) {
       console.log(state);
       console.log(action);
@@ -42,24 +45,37 @@
       }
       return state
     }
-
-
     const store = Redux.createStore(reducer);
+
+    // Render: everything that needs to be re-rendered when the state changes - passed to store.subscribe method
+    function render() {
+      state = store.getState()
+      total.innerText = state
+    }
 
     // Passing both variaibles
     store.dispatch(sum(10))
-
     // Not passing a payload, just the type
     store.dispatch(double())
 
+    // Shows initial state on console and <h1>
     let state = store.getState();
-
     console.log(`Final state: ${state}`);
-
     document.querySelector("#title").innerText = `State = ${state}`;
 
+    // Button
     const button = document.querySelector('#button');
-    button.addEventListener('click', () => store.dispatch(double()))
+    button.addEventListener('click', () => store.dispatch(sum(1000)))
+
+    // Total <h1>
+    const total = document.querySelector('#total');
+    total.innerText = state
+
+    // Redux: store subscribe method
+    const unsubscribe = store.subscribe(render)
+    // To stop subscribe, return the subscribe itself
+    // unsubscribe();
+
 
   </script>
 </body>
