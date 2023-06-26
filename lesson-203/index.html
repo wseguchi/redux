@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+  <title>Redux Lessons</title>
+</head>
+
+<body>
+
+  <h1 id="title">Hello World!</h1>
+
+  <button id="button">Double State</button>
+
+  <script>
+    // Constants
+    const SUM = 'SUM';
+    const DOUBLE = 'DOUBLE';
+
+    // Action Creator
+    function double() {
+      return { type: DOUBLE }
+    }
+
+    function sum(payload) {
+      return { type: SUM, payload }
+    }
+
+    const initialState = 10
+
+    function reducer(state = initialState, action) {
+      console.log(state);
+      console.log(action);
+
+      if (action.type === DOUBLE) {
+        return state * 2
+      }
+      if (action.type === SUM) {
+        return state + action.payload
+      }
+      return state
+    }
+
+
+    const store = Redux.createStore(reducer);
+
+    // Passing both variaibles
+    store.dispatch(sum(10))
+
+    // Not passing a payload, just the type
+    store.dispatch(double())
+
+    let state = store.getState();
+
+    console.log(`Final state: ${state}`);
+
+    document.querySelector("#title").innerText = `State = ${state}`;
+
+    const button = document.querySelector('#button');
+    button.addEventListener('click', () => store.dispatch(double()))
+
+  </script>
+</body>
+
+</html>
