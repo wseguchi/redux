@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+  <script src="https://unpkg.com/immer@1.12.0/dist/immer.umd.js"></script>
+  <title>Lesson 208 - Redux Challenge</title>
+</head>
+
+<body>
+  <div id="container">
+    <div id="info">
+      <h1>Nome: <span id="nome"></span></h1>
+      <h2>Email: <span id="email"></span></h2>
+      <h2>Tempo Restante: <span id="tempoRestante"></span></h2>
+      <h2>Aulas Completas: <span id="aulasCompletas"></span></h2>
+      <h2></h2>
+    </div>
+    <div id="buttons">
+      <button id="btnIncrementarTempo">Incrementar Tempo</button>
+      <button id="btnReduzirTempo">ReduzirTempo</button>
+      <input type="email" id="inpEmail" name="email" placeholder="Novo email">
+      <button id="btnModificarEmail">Modificar E-mail</button>
+      <div id="completarAula">
+        <input type="number" id="inpAulaId" name="aulaId" placeholder="ID" max="4">
+        <button id="btnCompletarAula">Completar Aula</button>
+      </div>
+      <button id="btnCompletarCurso">Completar Curso</button>
+      <button id="btnResetarCurso">Resetar Curso</button>
+    </div>
+  </div>
+
+  <script type="module">
+
+    // Constantes Redux
+    const INCREMENTAR_TEMPO = 'INCREMENTAR_TEMPO';
+    const REDUZIR_TEMPO = 'REDUZIR_TEMPO';
+    const MODIFICAR_EMAIL = 'MODIFICAR_EMAIL';
+    const COMPLETAR_AULA = 'COMPLETAR_AULA';
+    const COMPLETAR_CURSO = 'COMPLETAR_CURSO';
+    const RESETAR_CURSO = 'RESETAR_CURSO';
+
+
+    // Constantes Html
+    const nome = document.querySelector('#nome');
+    const email = document.querySelector("#email");
+    const tempoRestante = document.querySelector('#tempoRestante');
+    const aulasCompletas = document.querySelector('#aulasCompletas');
+
+
+
+    // Function Constructer
+    function incrementar(payload) {
+      return { type: INCREMENTAR_TEMPO, payload };
+    }
+    function reduzir(payload) {
+      return { type: REDUZIR_TEMPO, payload };
+    }
+    function modificarEmail(payload) {
+      return { type: MODIFICAR_EMAIL, payload }
+    }
+    function completarAula(payload) {
+      return { type: COMPLETAR_AULA, payload }
+    }
+    function completarCurso() {
+      return { type: COMPLETAR_CURSO }
+    }
+    function resetarCurso() {
+      return { type: RESETAR_CURSO }
+    }
+
+    const aluno = {
+      nome: 'André Rafael',
+      email: 'andre@origamid.com',
+      diasRestantes: 120,
+    };
+
+    const aulas = [
+      {
+        id: 1,
+        nome: 'Design',
+        completa: true,
+      },
+      {
+        id: 2,
+        nome: 'HTML',
+        completa: false,
+      },
+      {
+        id: 3,
+        nome: 'CSS',
+        completa: false,
+      },
+      {
+        id: 4,
+        nome: 'JavaScript',
+        completa: false,
+      },
+    ];
+
+    const reducerAluno = immer.produce((state, action) => {
+      switch (action.type) {
+        case 'INCREMENTAR_TEMPO':
+          state.diasRestantes = state.diasRestantes + action.payload;
+          break;
+        case 'REDUZIR_TEMPO':
+          state.diasRestantes = state.diasRestantes - action.payload;
+          break;
+        case 'MODIFICAR_EMAIL':
+          state.email = action.payload;
+          break;
+      }
+    }, aluno);
+
+    const reducerAulas = immer.produce((state, action) => {
+      switch (action.type) {
+        case 'COMPLETAR_AULA':
+          state[action.payload - 1].completa = true
+          break;
+        case 'COMPLETAR_CURSO':
+          for (let i = 0; i < state.length; i++) {
+            state[i].completa = true
+          }
+          break;
+        case 'RESETAR_CURSO':
+          for (let i = 0; i < state.length; i++) {
+            state[i].completa = false
+          }
+          break;
+      }
+    }, aulas);
+
+    const reducer = Redux.combineReducers({ reducerAluno, reducerAulas });
+    const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+    function calculaAulasCompletas(curState) {
+      curState.reducerAulas.filter((completa) => completa === true).length
+    }
+
+    function render() {
+      const curState = store.getState()
+      nome.innerText = curState.reducerAluno.nome;
+      email.innerText = curState.reducerAluno.email;
+      tempoRestante.innerText = curState.reducerAluno.diasRestantes;
+      aulasCompletas.innerHTML = curState.reducerAulas.filter(aula => aula.completa === true).length
+    }
+    store.subscribe(render);
+
+    // Buttons Actions
+    document.querySelector('#btnIncrementarTempo').addEventListener('click', () => store.dispatch(incrementar(1)));
+
+    document.querySelector('#btnReduzirTempo').addEventListener('click', () => store.dispatch(reduzir(1)));
+
+    document.querySelector('#btnModificarEmail').addEventListener('click', () => store.dispatch(modificarEmail(document.querySelector('#inpEmail').value)));
+
+    document.querySelector('#btnCompletarAula').addEventListener('click', () => store.dispatch(completarAula(document.querySelector('#inpAulaId').value)));
+
+    document.querySelector('#btnCompletarCurso').addEventListener('click', () => store.dispatch(completarCurso()));
+
+    document.querySelector('#btnResetarCurso').addEventListener('click', () => store.dispatch(resetarCurso()));
+
+    // Renders for the 1st time
+    render()
+
+  </script>
+</body>
+
+</html>
